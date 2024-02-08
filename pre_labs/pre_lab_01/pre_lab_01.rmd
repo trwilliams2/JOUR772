@@ -55,7 +55,7 @@ number * number
 
 What does it return? Type your answer below:
 
-**Answer:**
+Answer: 4
 
 ### Task 3: Install packages
 
@@ -93,7 +93,7 @@ umd_courses <- read_rds("umd_courses.rds")
 
 Once it loads, look at the environment window at right in RStudio for umd_courses It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer**
+Answer: 60712 observations of 8 variables
 
 ### Task 6: Glimpse data
 
@@ -103,7 +103,7 @@ Once it loads, look at the environment window at right in RStudio for umd_course
 glimpse(umd_courses)
 ```
 
-In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). **Answer**
+In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). Answer: id: <chr>; seats: <dbl>
 
 ### Task 7: Examine data "head"
 
@@ -137,7 +137,7 @@ umd_courses |>
 
 Describe what you think each line of this code is doing below, based on the result:
 
-**Answer**
+Answer: (Summarize) Counting number of classes (group by) offered in each term
 
 ### Task 10: Adding arrange to sort the data
 
@@ -217,8 +217,8 @@ umd_courses |>
     total_seats = sum(seats),
     mean_seats = mean(seats),
     median_seats = median(seats),
-    min_seats = min(seats),
-    max_seats = max(seats),
+    # add minimum seats here
+    # add maximum seats here
   ) |>
   arrange(desc(total_seats))
 ```
