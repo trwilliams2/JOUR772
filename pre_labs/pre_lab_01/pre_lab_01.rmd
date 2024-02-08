@@ -169,7 +169,7 @@ umd_courses |>
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
 
-**Answer**
+**Answer:**
 
 ### Task 12: Other summary functions
 
