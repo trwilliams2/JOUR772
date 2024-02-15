@@ -354,8 +354,8 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 **Answer**
 
-1.  
+1.  Courses: What are the departments with the least number of courses? Any surprises?
 
-2.  
+2.  How many advanced level courses (400 and above) are there in the journalism department?
 
-3.  
+3.  How many data journalism courses (that we can tell from generic title searches like "data") are there in the journalism department?
