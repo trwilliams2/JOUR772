@@ -99,23 +99,28 @@ Most or all of the 2022 Facebook ads for the Ashwani group are marked: "This con
 
 **Q3.** Given the list of top spenders in A1 and the primary results for governor (<https://elections.maryland.gov/elections/2022/primary_results/gen_results_2022_1.html>), who is missing from that A1 list? Did those campaigns run Facebook ads, according to Facebook's ad library? Who are the biggest recipients of media expenses by the Democratic primary winner for governor (HINT: that person has two committees)?
 
-**A3.** The top primary vote-getting Republicans and Democrats are missing. Yes. Getting coding errors on last question.
+**A3.** The top primary vote-getting Republicans and Democrats are missing. SKDK and a distant second, Foglamp (I hope, unless I missed a committee name!).
 
 ```{r}
-media_expenses_clean <- read_csv("data/media-expenses-clean.csv") |> 
-filter(str_detect(committee_name, "moore"))
+media_expenses_clean <- read_csv("data/media-expenses-clean.csv") |>
+  filter(str_detect(committee_name, "Moore")) |>
+  group_by(payee_name) |>
+  summarise(total_amount = sum(amount)) |>
+  arrange(desc(total_amount))
+  
+  
 
 ```
 
 **Q4.** The media expense data you cleaned also has a standardized purpose column. Write code to generate a list of the committees with the total amount of spending on online advertising. How does this list compare to the one from Q1 about top Facebook spenders? Of the top 5 committees who spent the most on Facebook ads from Q1, are there any that appear to have spent *all* of their online advertising dollars on Facebook?
 
-**A4.** Getting errors.
+**A4.** It's a totally different list basically. I don't think so, but not sure how to check.
 
 ```{r}
-media_expenses_clean <- read_csv("data/media-expenses-clean.csv") |> 
+media_expenses_clean <- read_csv("data/media-expenses-clean.csv") |>
 filter(expense_purpose=="Online Advertising") |> group_by(committee_name) |> summarise(total_amount = sum(amount)) |> arrange(desc(total_amount))
 ```
 
 **Q5** You've been asked to summarize your findings about spending on Facebook by Maryland political candidates. How much do we know and what don't we know? What's the best story idea you've found here?
 
-**A5.** Getting errors but I assume that not all the spending on Facebook has been properly labeled.
+**A5.** I assume that not all the spending on Facebook has been properly labeled, but that could be because of a variety of maybe interesting or maybe boring reasons. The most interesting thing so far I think is the top Facebook ad spender had his ads removed. Would be interesting to try find out why.
