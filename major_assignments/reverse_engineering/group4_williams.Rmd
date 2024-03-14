@@ -51,7 +51,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
--   **Sentence text**: Nearly 4,200 men and women are serving lifetime sentences in the state.
+-   **Sentence text**: "Nearly 4,200 men and women are serving lifetime sentences in the state."
 -   **Analysis summary**: This is a pretty straightforward count of the anonymized Department of Corrections ID numbers for charges for those serving life sentences. A group by is needed because some prisoners have multiple charges. The exact number appears to be 4,177 people.
 
 ```{r}
@@ -68,11 +68,15 @@ parole |>
 
 ### Sentence 2
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: "More than half of the people serving life in Louisiana were convicted of second-degree murder, our investigation found ..."
+-   **Analysis summary**: Filtering by the second-degree murder offense and then grouping and counting the doc numbers, we find that 2,242 of those serving life sentences have at least one second-degree murder conviction, about 54 percent of the 4,177 total.
 
 ```{r}
-# Put code to reverse engineer sentence here
+parole |>
+  filter(offenses=="SECOND DEGREE MURDER") |>
+  group_by(doc_number) |>
+  summarize(count=n())
+  
 
 # Display results of code below this codeblock
 
@@ -80,11 +84,20 @@ parole |>
 
 ### Sentence 3
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: "... including over three-quarters of the 124 women serving life (parole is forbidden for almost all life sentences in the state)."
+-   **Analysis summary**: First we verified the number of women serving life sentences according to the data set (124). Then we counted the number of women serving such sentences with a second-degree murder conviction, using a combined filter, group by and count. 96 of the 124 women (77 percent) fit that criteria.
 
 ```{r}
 # Put code to reverse engineer sentence here
+parole |>
+  filter(gender=="F") |>
+  group_by(doc_number, ) |>
+  summarize(count=n())
+  
+parole |>
+  filter(offenses=="SECOND DEGREE MURDER" & gender=="F") |>
+  group_by(doc_number, ) |>
+  summarize(count=n())
 
 # Display results of code below this codeblock
 
