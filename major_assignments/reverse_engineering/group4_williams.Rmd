@@ -40,9 +40,9 @@ In this section, describe the source of the data, write a basic data dictionary 
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
 
 # Clean required data and prepare for analysis if needed. 
+#In OpenRefine, cleaned column names and cleaned age bucket categories (changing hyphens to "to"s).
 
-parole <- read_csv("data/lousiana_life_without_parole_sept_2021.csv") |>
-clean_names()
+parole <- read_csv("data/parole-cleaned-open-refine.csv")
 ```
 
 ## Sentences to Engineer
@@ -91,12 +91,12 @@ parole |>
 # Put code to reverse engineer sentence here
 parole |>
   filter(gender=="F") |>
-  group_by(doc_number, ) |>
+  group_by(doc_number) |>
   summarize(count=n())
   
 parole |>
   filter(offenses=="SECOND DEGREE MURDER" & gender=="F") |>
-  group_by(doc_number, ) |>
+  group_by(doc_number) |>
   summarize(count=n())
 
 # Display results of code below this codeblock
@@ -105,11 +105,19 @@ parole |>
 
 ### Sentence 4
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: More than 70% of people serving life without parole are Black, according to our analysis of state data.
+-   **Analysis summary**: A similar process of a group by and count. 3,042 people in the data set are listed as Black. 3,042 out of 4,177 total people in the set is about 73 percent.
 
 ```{r}
 # Put code to reverse engineer sentence here
+parole |>
+  filter(race=="B") |>
+  group_by(doc_number) |>
+  summarize(count=n())
+
+parole |>
+  group_by(doc_number) |>
+  summarize(count=n())
 
 # Display results of code below this codeblock
 
@@ -117,13 +125,20 @@ parole |>
 
 ### Sentence 5
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: [Statement in the date notebook appendix]: More than half of the people serving life without parole are between the ages of 40 and 60.
+-   **Analysis summary**: The data values were listed in categories like "40 - 50." Writing code around the hyphens seemed like a pain, so we used OpenRefine to clean them. Then we added the 40 to 50 (1,091) and 50 to 60 (1,182) categories in group by counts to get 2,273 inmates, which is about 54 percent of the total inmates in the data set.
 
 ```{r}
 # Put code to reverse engineer sentence here
+parole |>
+  filter(bucket_age=="40 to 50") |>
+  group_by(doc_number) |>
+  summarize(count=n())
 
-# Display results of code below this codeblock
+parole |>
+  filter(bucket_age=="50 to 60") |>
+  group_by(doc_number) |>
+  summarize(count=n())
 
 ```
 
