@@ -35,7 +35,7 @@ You'll need your Census API Key:
 **Task** set your API Key if you haven't already. You won't need to install or overwrite it.
 
 ```{r echo=FALSE}
-census_api_key("435eeee7f4679ccc8fa9f48031e5aaa40ad74f9f", install=TRUE)
+census_api_key("", install=TRUE)
 ```
 
 ## Load and view ACS variables
