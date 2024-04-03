@@ -76,9 +76,9 @@ md_median_age |> filter(estimate >=50)
 5.  Join the ACS data to the Montgomery County zip code totals dataframe and rename the estimate column to a meaningful name you've given the ACS variable.
 6.  Add a column to the joined dataframe that calculates a rate of calls per 1,000 population.
 
-Which zip code has the highest rate of calls? Which has the lowest? 20707 (lowest non-zero)
+Which zip code has the highest rate of calls? Which has the lowest?
 
-**A3**
+**A3** 20877. 20707 (lowest non-zero).
 
 ```{r}
 moco_zip_calls <- read_csv ("data/montgomery_2022_overdoses.csv") |>
@@ -92,21 +92,40 @@ mutate(zip = as.character(zip)) |>
               state = 'MD',
               year = 2019)
   
-  moco_pop_overdose <- moco_zip_calls |> inner_join(md_zcta_age, by= c('zip' = 'GEOID')) |> rename(adult_population = estmate)
+  moco_pop_overdose <- moco_zip_calls |> inner_join(md_zcta_age, by= c('zip' = 'GEOID')) |> rename(adult_population = estimate)
   
   moco_pop_overdose <- moco_pop_overdose |>
-    mutate(rate_per_1k = (total_calls/population)*1000) |>
+    mutate(rate_per_1k = (total_calls/adult_population)*1000) |>
     arrange(desc(rate_per_1k))
     
 ```
 
 **Q4** Using [CensusReporter.org](https://censusreporter.org/), examine the zip codes with the highest and lowest rates and compare and contrast their demographic profiles. Is there a story here?
 
-**A4**
+**A4:** 20877 is in the Gaithersburg area, with \$86,134 as the median household income, and 13.2% of the population is below the poverty line. It has a plurality of Hispanic residents. 20707 is a northeast suburban area with \$97,720 as the median household income and 8.9% of the population below the poverty line. It has a plurality of Black residents.
+
+I'm not sure that is enough to go on for a story, but looking at more of the zip codes with high and low rates might point to which of these variables are relevant.
 
 **Q5** Go back to your joined dataframe from Q3 and add two more columns representing the minimum and maximum populations based on the estimate and margin of error, then calculate per capita rates for each. Do you get the same two zip codes for the highest and lowest as you did before? Does that give you more or less confidence in your answers to Q3?
 
-**A5**
+**A5** Yes, which gives me more confidence in the Q3 answers.
 
 ```{r}
+moco_pop_overdose <- moco_pop_overdose |>
+  mutate(min_population = (adult_population-moe)) |>
+  mutate(max_population = (adult_population+moe)) |>
+  mutate(rate_per_1k_max = (total_calls/max_population)*1000) |>
+    mutate(rate_per_1k_min = (total_calls/min_population)*1000) |>
+      arrange((rate_per_1k_min))
+
+moco_pop_overdose |>
+  arrange((rate_per_1k_max))
+
+moco_pop_overdose |>
+  arrange(desc(rate_per_1k_max))
+
+moco_pop_overdose |>
+  arrange(desc(rate_per_1k_min))
+
+    
 ```
