@@ -125,7 +125,9 @@ What do you think the story here is, and what would you want to know
 more about? Put the answer below along with the URL of your map.
 
 **A3.** Not sure yet, but more overdoses appear to be in the more
-populous areas. <https://datawrapper.dwcdn.net/2gqyW/2/>
+populous areas. But that's not the whole story, as Silver Spring did not
+have an extreme number of calls. Income may be another factor.
+<https://datawrapper.dwcdn.net/2gqyW/2/>
 
 ```{r}
 montgomery_2022_overdoses <-read_csv("data/montgomery_2022_overdoses.csv") |> clean_names() |>
