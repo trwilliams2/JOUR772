@@ -82,13 +82,19 @@ pg_calls_month |>
 
 Describe the pattern of results; you may want to look at the data to dig into particular outliers.
 
-**A2.**
+**A2.** Calls begin to spike after the first few weeks of the year, and they spike every few weeks throughout the year, particularly in summer.
 
-```
+```         
 ```
 
 ```{r}
-pg_calls_month |>
+
+
+pg_calls_week <- pg_calls |>
+  group_by(week) |>
+  summarize(total_calls =n())
+
+pg_calls_week |>
   ggplot() +
   geom_line(aes(x=week,y=total_calls)) +
   coord_flip() +
@@ -126,16 +132,23 @@ To answer this question, do the following:
 6.  Add a label for each point that shows the zip code using geom_text() - see some examples of its use at <https://ggplot2.tidyverse.org/reference/geom_text.html#ref-examples>. Try to make the names as easy to read as possible by avoiding overlap.
 7.  In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
 
-**A3.**
+**A3.** There does seem to be a relationship, but I don't think we controlled for the population in those zip codes, so it's hard to say much besides "wealthier=generally fewer calls."
 
 ```{r}
 pg_calls_zipcodes <- pg_calls |> group_by(zipcode) |> summarize(total_calls = n())
 
+md_median_income_zip <- get_acs(geography = 'zcta', variables='B19013_001', state='MD', year=2019)
+
 pg_calls_with_income <- pg_calls_zipcodes |> inner_join (md_median_income_zip, by = c('zipcode'='GEOID'))
 
-ggplot(pg_calls_with_income, aes(x=estimate, y=total_calls))+ geom_point() + labs(title = 'Wealthier areas of PG county have fewer 911 overdose calls', x = 'Median income', y= 'Total calls') +
-  
-  geom_text(aes(x=estimate,y=total_calls, label=zipcode, check_overlap = TRUE, size=2))
+install.packages('ggrepel')
+library(ggrepel)
+
+pg_calls_with_income |>
+ggplot() +
+  geom_point(aes(x=total_calls, y=estimate))+
+  geom_text_repel(aes(x=total_calls,y=estimate, label=zipcode), check_overlap = TRUE) +
+  labs(title = 'Wealthier areas of PG county have fewer 911 overdose calls', x = 'Median income', y= 'Total calls')
 
 
 
