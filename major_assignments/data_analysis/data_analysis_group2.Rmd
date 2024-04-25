@@ -1,0 +1,63 @@
+---
+title: "Data Analysis Project Group 2: Board Game Ratings"
+author: "Eli Cohen, Sarah Meador, Tim Williams"
+date: "4/24/24"
+output:
+  html_document:
+    theme: cerulean
+    highlight: pygments
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load libraries
+
+```{r}
+options(scipen=999)
+# Load libraries
+library(tidyverse)
+library(janitor)
+```
+
+# Data cleaning and first analysis
+
+The dataset is pulled from BoardGameGeek, a user-submitted website for game ratings. The data was pulled about three years ago. There 20,343 rows and 14 columns. An initial analysis of shows about 19,900 games in the dataset. There are some columns with some missing data, such as year published.
+
+```{r}
+#Dataset was cleaned in OpenRefine to replace semicolon-separated values with comma-separated values, and to convert rating values with commas to values with decimals. It was also clustered to clean about 75 games that had similar name variants.
+bgg <- read_csv("bgg_dataset_clean.csv") |> clean_names()
+
+#count games in set
+bgg |>
+  group_by(name) |>
+  summarise()
+
+#highest rated game by average
+bgg |>
+  group_by(name) |>
+  arrange(desc(rating_average))
+
+#highest ranked game (Board Game Geek standardizes the average rating values, rewarding games with more reviews)
+bgg |>
+  group_by(name) |>
+  arrange(desc(bgg_rank))
+
+#average game play time: This isn't grouped, not sure how to do that here. Get a very small number when I try that.
+bgg |>
+    mutate(total_time = sum(play_time)) |>
+    mutate(avg_time = total_time/20343)
+
+#average game play time for top 100 games: Getting an error here.
+bgg |>
+  filter(bgg_rank<101) |>
+  group_by(name) |>
+  summarise(count = n()) |>
+  mutate(top_total_time = sum(play_time)) |>
+    mutate(top_avg_time = total_time/count)
+```
