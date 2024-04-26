@@ -27,7 +27,15 @@ library(janitor)
 
 # Data cleaning and first analysis
 
-The dataset is pulled from BoardGameGeek, a user-submitted website for game ratings. The data was pulled about three years ago. There 20,343 rows and 14 columns. An initial analysis of shows about 19,900 games in the dataset. There are some columns with some missing data, such as year published.
+The dataset is pulled from BoardGameGeek, a user-submitted content website for game ratings. The data was pulled about three years ago. So it won't show changes over time or current rankings. There 20,343 rows and 14 columns.
+
+An initial analysis of shows about 19,900 games in the dataset. There are thousands more "unranked" games in the website's database that don't have enough reviews to get a ranking and were not included in this dataset.
+
+Most of the columns except the ratings and rankings have some missing data. The mechanics and domain columns are particularly spotty. Both of those have multiple categories in a single cell, so that will need to be separated and sorted.
+
+Overall, though, the dataset seems reasonably comprehensive.
+
+Below we've tried a few ways to analyze the data; not all of them successful yet.
 
 ```{r}
 #Dataset was cleaned in OpenRefine to replace semicolon-separated values with comma-separated values, and to convert rating values with commas to values with decimals. It was also clustered to clean about 75 games that had similar name variants.
@@ -60,4 +68,21 @@ bgg |>
   summarise(count = n()) |>
   mutate(top_total_time = sum(play_time)) |>
     mutate(top_avg_time = total_time/count)
+
+#seeing how many games are in each category, a limitation of this is that we will have to figure out how to separate the ones that have multiple categories listed.
+bgg |>
+  group_by(domains) |>
+  summarize(count = n()) |>
+  arrange(desc(count))
+
+#This chunk tells us the average rating for each cluster of games. As mentioned above, we will have to figure out how to separate the domains.
+bgg |>
+  group_by(domains) |>
+  summarize(average = mean(rating_average)) |>
+  arrange(desc(average))
+
+#share of how many people rated the game out of how many users own the game. Not sure why some are over 100.
+bgg <- bgg |>
+  mutate(pct_rated = (users_rated/owned_users*100))
+
 ```
