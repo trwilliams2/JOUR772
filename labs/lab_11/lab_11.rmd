@@ -78,13 +78,28 @@ Finally, tell me what questions you could ask of this data. Be creative.
 **A3 Tried to adapt technique in Stack Overflow but getting an "unexpected node" error. For what you could ask of the data, counting topics of the titles and seeing what issues come up most frequently could be interesting/show Cardin's legislative interests.**
 
 ```{r}
-cardin_releases <- "https://www.cardin.senate.gov/?post_type=press-releases" |> read_html() 
+results <- "https://www.cardin.senate.gov/?post_type=press-releases" |> read_html() 
 
-releases <- cardin_releases 
+dates <- results |>
+  html_elements("h5") |>
+  html_text() |>
+  as_tibble()
 
-releases %>% html_nodes("a") %>% html_attr('href') |> html_text() |> as_tibble() 
+titles <- results |>
+  html_elements("h3 a") |>
+  html_text() |>
+  as_tibble()
+
+urls <- results |>
+  html_elements("h3 a") |>
+  html_attr('href') |>
+  as_tibble()
+
+releases <-bind_cols(dates, titles, urls)
+
+releases <- releases |>
+  rename(date = 1, title = 2, url = 3) |>
+  mutate(date = mdy(date))
 
 #releases <- cardin_releases |> html_elements('p') |> html_text() |> as_tibble() |> separate(value, c('date', 'title', 'url'), sep=":") |> drop_na(title) |> mutate(title = str_squish(title), date = mdy(date))
-
-#analysis
 ```
