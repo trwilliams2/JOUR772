@@ -101,10 +101,10 @@ trigrams <- sanctions |>
 
 ```{r}
 md_attorney_sanctions |>
-filter(text==str_detect("attorney trust account")) |>
+filter(str_detect(text, "attorney trust account")) |>
 group_by(fiscal_year) |>
-  summarise(count=(n))
+  summarize(count = n())
 
 ```
 
-**A3.** Getting an error.
+**A3.** The term has generally increased in use, which means an increase in complaints. Looking at resolved cases might show whether there are actually more confirmed cases of misuse.
