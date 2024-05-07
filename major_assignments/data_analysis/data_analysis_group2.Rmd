@@ -21,8 +21,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 options(scipen=999)
 # Load libraries
+library(rvest)
 library(tidyverse)
 library(janitor)
+library(lubridate)
 ```
 
 # Data cleaning and first analysis
@@ -36,6 +38,14 @@ Most of the columns except the ratings and rankings have some missing data. The 
 Overall, though, the dataset seems reasonably comprehensive.
 
 Below we've tried a few ways to analyze the data; not all of them successful yet.
+
+```{r}
+#Trying to scrape Amazon best-selling games list to compare to rankings in our dataset. Getting an error though.
+
+amazon_sales <- "https://www.amazon.com/s?k=board+games&i=toys-and-games&rh=n%3A166220011%2Cn%3A166225011&s=exact-aware-popularity-rank&dc&ds=v1%3AaQEKH02OarbqZcWl5TpgMBrniTzJ1z6Y12L9uw9AR8o&crid=T0DK7SWQ6A5J&qid=1714669276&rnid=2941120011&sprefix=board+games%2Caps%2C75&ref=sr_st_exact-aware-popularity-rank" |> read_html()
+
+amazon_sales |> html_elements('div class') |> html_text()
+```
 
 ```{r}
 #Dataset was cleaned in OpenRefine to replace semicolon-separated values with comma-separated values, and to convert rating values with commas to values with decimals. It was also clustered to clean about 75 games that had similar name variants.
@@ -56,21 +66,21 @@ bgg |>
   group_by(name) |>
   arrange(desc(bgg_rank))
 
-#average game play time: This isn't grouped, not sure how to do that here. Get a very small number when I try that.
-bgg |>
-    mutate(total_time = sum(play_time)) |>
-    mutate(avg_time = total_time/20343)
+#Tim#Average game play time for top 100 games versus all games. Need to eventually exclude rows missing play time, if applicable.
 
-#average game play time for top 100 games: Getting an error here.
-bgg |>
+bgg_time <- bgg |>
   filter(bgg_rank<101) |>
-  group_by(name) |>
-  summarise(count = n()) |>
-  mutate(top_total_time = sum(play_time)) |>
-    mutate(top_avg_time = total_time/count)
+  mutate(time_total_top = sum(play_time)) |>
+  mutate(time_average_top =(time_total_top/100))
+
+bgg_time_all <- bgg |>
+  mutate(time_total_all = sum(play_time)) |>
+  mutate(time_average_all =(time_total_all/20343))
+
+#Average play time for all games is lower, about 90 minutes, while for the top games it's almost 130 minutes. That likely reflects a preference for longer, more complex games among the board game enthusiasts who care enough to rate games online.
 
 #seeing how many games are in each category, a limitation of this is that we will have to figure out how to separate the ones that have multiple categories listed.
-bgg |>
+bgg_domain <-bgg |>
   group_by(domains) |>
   summarize(count = n()) |>
   arrange(desc(count))
