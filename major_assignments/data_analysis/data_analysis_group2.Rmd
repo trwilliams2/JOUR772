@@ -25,6 +25,7 @@ library(rvest)
 library(tidyverse)
 library(janitor)
 library(lubridate)
+library(corrr)
 ```
 
 # Data cleaning and first analysis
@@ -39,12 +40,7 @@ Overall, though, the dataset seems reasonably comprehensive.
 
 Below we've tried a few ways to analyze the data; not all of them successful yet.
 
-```{r}
-#Trying to scrape Amazon best-selling games list to compare to rankings in our dataset. Getting an error though.
-
-amazon_sales <- "https://www.amazon.com/s?k=board+games&i=toys-and-games&rh=n%3A166220011%2Cn%3A166225011&s=exact-aware-popularity-rank&dc&ds=v1%3AaQEKH02OarbqZcWl5TpgMBrniTzJ1z6Y12L9uw9AR8o&crid=T0DK7SWQ6A5J&qid=1714669276&rnid=2941120011&sprefix=board+games%2Caps%2C75&ref=sr_st_exact-aware-popularity-rank" |> read_html()
-
-amazon_sales |> html_elements('div class') |> html_text()
+```{}
 ```
 
 ```{r}
@@ -94,5 +90,23 @@ bgg |>
 #share of how many people rated the game out of how many users own the game. Not sure why some are over 100.
 bgg <- bgg |>
   mutate(pct_rated = (users_rated/owned_users*100))
+
+#Trying to scrape Amazon best-selling games list to compare to rankings in our dataset. Getting a connection error though.
+
+#amazon_sales <- "https://www.amazon.com/Best-Sellers-Board-Games/zgbs/toys-and-games/166225011" |> read_html()
+
+#amazon_sales_results <- amazon_sales |> html_elements('img alt') |> as_tibble()
+
+#Instead entered the games manually from that page. 
+
+amazon <- read_csv("amazon_top_sales.csv") |> clean_names()
+
+amazon_merge <- amazon |> inner_join(bgg, by ='name') 
+
+cor.test(amazon_merge$amazon_sales_rank,  amazon_merge$bgg_rank)
+
+#This shows a very weak correlation (0.03707177) with a high p-value (0.8514) between the amazon sales rank and the Board Game Geek ranking. Perhaps more Amazon sales data would show a higher correlation, but looking at the most popular games (mostly family games) on Amazon suggests the general board audience buys more casual games than the Board Game Geek audience, which tends to favor more complex games.
+
+
 
 ```
